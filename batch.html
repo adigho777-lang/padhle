@@ -23,10 +23,31 @@
     .breadcrumb-bar .current { color: #555; }
     .breadcrumb-bar .sep { color: #aaa; }
 
-    main { max-width: 1200px; margin: 20px auto; padding: 0 28px; }
+    main { max-width: 1200px; margin: 20px auto; padding: 0 16px; }
 
     .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
-    @media (max-width: 700px) { .grid { grid-template-columns: 1fr; } }
+    @media (max-width: 480px) {
+      header { padding: 10px 14px; }
+      header img { height: 28px; }
+      .hero { padding: 16px 16px 0; }
+      .hero h1 { font-size: 15px; }
+      .tabs { padding-bottom: 12px; }
+      .tab { padding: 6px 14px; font-size: 12px; }
+      .breadcrumb-bar { padding: 8px 14px; }
+      .sub-tabs { padding: 10px 14px; }
+      main { padding: 0 10px; margin: 12px auto; }
+      .grid { grid-template-columns: 1fr; gap: 12px; }
+      .folder-card { padding: 18px 14px; }
+      .folder-card .f-icon { width: 32px; height: 32px; }
+      .folder-card .f-title { font-size: 13px; }
+      .video-card .vbody { padding: 10px 12px 12px; }
+      .video-card .vtitle { font-size: 13px; }
+      .btn-watch, .btn-pdf { font-size: 13px; padding: 9px 0; }
+    }
+    @media (max-width: 700px) and (min-width: 481px) {
+      .grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+      main { padding: 0 14px; }
+    }
     @media (max-width: 960px) and (min-width: 701px) { .grid { grid-template-columns: repeat(2, 1fr); } }
 
     .card { background: #fff; border-radius: 12px; box-shadow: 0 1px 6px rgba(0,0,0,0.08); overflow: hidden; display: flex; flex-direction: column; transition: box-shadow 0.2s, transform 0.15s; }
