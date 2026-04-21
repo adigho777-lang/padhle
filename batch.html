@@ -475,14 +475,15 @@
       let items = [];
       if (type === 'previous') {
         const data = await apiFetch(`${BASE}/api/padhle/previous-live?course_id=${courseId}`);
-        items = data.data || [];
+        items = Array.isArray(data.data) ? data.data : [];
       } else {
-        // live_status=1 (live now) + live_status=2 (upcoming)
         const [liveRes, upcomingRes] = await Promise.all([
           apiFetch(`${BASE}/api/padhle/live?course_id=${courseId}&live_status=1`),
           apiFetch(`${BASE}/api/padhle/live?course_id=${courseId}&live_status=2`)
         ]);
-        items = [...(liveRes.data || []), ...(upcomingRes.data || [])];
+        const liveItems     = Array.isArray(liveRes.data)     ? liveRes.data     : [];
+        const upcomingItems = Array.isArray(upcomingRes.data) ? upcomingRes.data : [];
+        items = [...liveItems, ...upcomingItems];
       }
 
       if (!items.length) {
