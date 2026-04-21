@@ -208,7 +208,7 @@
   }
 
   async function apiFetch(url) {
-    const res = await fetch(url);
+    const res = await fetch('/api/proxy?url=' + encodeURIComponent(url));
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     return res.json();
   }
