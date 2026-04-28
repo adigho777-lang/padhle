@@ -4,561 +4,446 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Batch Content</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Segoe UI', sans-serif; background: #f0f0f5; color: #333; }
+    :root{--blue-600:#2563EB;--blue-700:#1D4ED8;--gray-50:#F9FAFB;--gray-100:#F3F4F6;--gray-200:#E5E7EB;--gray-400:#9CA3AF;--gray-500:#6B7280;--gray-600:#4B5563;--gray-900:#111827;}
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:'Inter',sans-serif;background:#F5F5F5;color:var(--gray-900);}
+    .app{min-height:100vh;animation:page-enter 0.4s cubic-bezier(0.22,1,0.36,1) both;}
 
-    header { background: #fff; padding: 12px 28px; display: flex; align-items: center; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
-    header img { height: 36px; cursor: pointer; }
+    /* Header */
+    .header{background:white;padding:0.875rem 1.5rem;box-shadow:0 1px 3px rgba(0,0,0,0.1);border-bottom:1px solid var(--gray-200);display:flex;align-items:center;gap:1rem;}
+    .header img{height:32px;cursor:pointer;}
+    .header h1{font-size:1rem;font-weight:600;color:var(--gray-900);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 
-    .hero { background: #fff; padding: 22px 36px 0; }
-    .hero h1 { font-size: 20px; font-weight: 800; text-transform: uppercase; color: #111; margin-bottom: 16px; }
-    .tabs { display: flex; gap: 10px; padding-bottom: 16px; }
-    .tab { padding: 7px 18px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; background: #ede9fe; color: #7c3aed; }
-    .tab.active { background: #7c3aed; color: #fff; }
+    /* Tabs */
+    .tabs{display:flex;gap:0.5rem;padding:0.75rem 1.5rem;background:white;border-bottom:1px solid var(--gray-200);overflow-x:auto;scrollbar-width:none;}
+    .tabs::-webkit-scrollbar{display:none;}
+    .tab{padding:0.5rem 1rem;border-radius:6px;border:none;background:transparent;color:var(--gray-600);font-size:0.875rem;font-weight:500;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:0.4rem;white-space:nowrap;flex-shrink:0;}
+    .tab.active{background:var(--blue-600);color:white;}
+    .tab:hover:not(.active){background:var(--gray-100);}
 
-    .breadcrumb-bar { background: #f0f0f5; padding: 10px 36px; font-size: 13px; display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
-    .breadcrumb-bar .crumb { color: #7c3aed; cursor: pointer; }
-    .breadcrumb-bar .crumb:hover { text-decoration: underline; }
-    .breadcrumb-bar .current { color: #555; }
-    .breadcrumb-bar .sep { color: #aaa; }
+    /* Sub tabs */
+    .sub-tabs{display:none;gap:0.5rem;padding:0.75rem 1.5rem;background:var(--gray-50);border-bottom:1px solid var(--gray-200);overflow-x:auto;scrollbar-width:none;}
+    .sub-tabs::-webkit-scrollbar{display:none;}
+    .sub-tabs.show{display:flex;}
+    .sub-tab{padding:0.5rem 1rem;border-radius:6px;border:1px solid var(--gray-300);background:white;color:var(--gray-700);font-size:0.875rem;font-weight:500;cursor:pointer;transition:all 0.2s;white-space:nowrap;flex-shrink:0;}
+    .sub-tab.active{background:var(--blue-600);color:white;border-color:var(--blue-600);}
 
-    main { max-width: 1200px; margin: 20px auto; padding: 0 16px; }
+    /* Breadcrumb */
+    .breadcrumb{padding:0.75rem 1.5rem;background:white;border-bottom:1px solid var(--gray-200);font-size:0.8125rem;color:var(--blue-600);overflow-x:auto;white-space:nowrap;scrollbar-width:none;}
+    .breadcrumb::-webkit-scrollbar{display:none;}
+    .breadcrumb .crumb{color:var(--blue-600);cursor:pointer;}
+    .breadcrumb .crumb:hover{text-decoration:underline;}
+    .breadcrumb .current{color:var(--gray-500);}
+    .breadcrumb .sep{margin:0 0.4rem;color:var(--gray-400);}
 
-    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
-    @media (max-width: 480px) {
-      header { padding: 10px 14px; }
-      header img { height: 28px; }
-      .hero { padding: 16px 16px 0; }
-      .hero h1 { font-size: 15px; }
-      .tabs { padding-bottom: 12px; }
-      .tab { padding: 6px 14px; font-size: 12px; }
-      .breadcrumb-bar { padding: 8px 14px; }
-      .sub-tabs { padding: 10px 14px; }
-      main { padding: 0 10px; margin: 12px auto; }
-      .grid { grid-template-columns: 1fr; gap: 12px; }
-      .folder-card { padding: 18px 14px; }
-      .folder-card .f-icon { width: 32px; height: 32px; }
-      .folder-card .f-title { font-size: 13px; }
-      .video-card .vbody { padding: 10px 12px 12px; }
-      .video-card .vtitle { font-size: 13px; }
-      .btn-watch, .btn-pdf { font-size: 13px; padding: 9px 0; }
-    }
-    @media (max-width: 700px) and (min-width: 481px) {
-      .grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
-      main { padding: 0 14px; }
-    }
-    @media (max-width: 960px) and (min-width: 701px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+    /* Grid */
+    .content-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem;padding:1.5rem;}
 
-    .card { background: #fff; border-radius: 12px; box-shadow: 0 1px 6px rgba(0,0,0,0.08); overflow: hidden; display: flex; flex-direction: column; transition: box-shadow 0.2s, transform 0.15s; }
-    .card:hover { box-shadow: 0 4px 18px rgba(124,58,237,0.13); transform: translateY(-2px); }
+    /* Folder card */
+    .folder-card{background:white;border-radius:8px;padding:1rem 1.25rem;display:flex;align-items:center;gap:0.875rem;cursor:pointer;border:1px solid var(--gray-200);box-shadow:0 1px 2px rgba(0,0,0,0.05);transition:all 0.25s cubic-bezier(0.34,1.56,0.64,1);}
+    .folder-card:hover{box-shadow:0 8px 24px rgba(37,99,235,0.15);transform:translateY(-3px);}
+    .folder-card:active{transform:scale(0.97);}
+    .folder-card .f-title{font-size:0.9375rem;font-weight:500;color:var(--gray-900);}
 
-    /* Folder */
-    .folder-card { cursor: pointer; padding: 28px 20px; display: flex; align-items: center; gap: 16px; min-height: 90px; }
-    .folder-card .f-icon { width: 42px; height: 42px; flex-shrink: 0; }
-    .folder-card .f-title { font-size: 14px; font-weight: 700; text-transform: uppercase; color: #1a1a1a; }
+    /* Video card */
+    .video-card{background:white;border-radius:8px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.1);transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1);}
+    .video-card:hover{box-shadow:0 12px 32px rgba(37,99,235,0.2);transform:translateY(-4px);}
+    .video-card:active{transform:scale(0.97);}
+    .video-card img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;}
+    .video-card .vbody{padding:0.875rem 1rem 1rem;}
+    .video-card .vtitle{font-size:0.9375rem;font-weight:500;color:var(--gray-900);line-height:1.4;margin-bottom:0.375rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+    .video-card .vmeta{font-size:0.8125rem;color:var(--gray-500);display:flex;align-items:center;gap:0.3rem;margin-bottom:0.25rem;}
 
-    /* Video */
-    .video-card .thumb { width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block; }
-    .video-card .vbody { padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 4px; flex: 1; }
-    .video-card .vtitle { font-size: 14px; font-weight: 600; color: #1a1a1a; line-height: 1.4; }
-    .video-card .vmeta { font-size: 12px; color: #888; display: flex; align-items: center; gap: 4px; }
-
-    /* PDF card */
-    .pdf-card { cursor: pointer; padding: 24px 20px; display: flex; align-items: center; gap: 16px; min-height: 90px; }
-    .pdf-card .p-icon { font-size: 36px; flex-shrink: 0; }
-    .pdf-card .p-title { font-size: 14px; font-weight: 700; color: #1a1a1a; }
-
-    /* Link card */
-    .link-card { cursor: pointer; padding: 24px 20px; display: flex; align-items: center; gap: 16px; min-height: 90px; }
-    .link-card .l-icon { font-size: 32px; flex-shrink: 0; }
-    .link-card .l-title { font-size: 14px; font-weight: 700; color: #1a1a1a; }
+    /* Buttons */
+    .btn-watch{width:100%;background:var(--blue-600);color:white;padding:0.625rem;border-radius:6px;border:none;font-weight:500;font-size:0.875rem;cursor:pointer;margin-top:0.75rem;display:flex;align-items:center;justify-content:center;gap:0.4rem;transition:all 0.2s cubic-bezier(0.34,1.56,0.64,1);}
+    .btn-watch:hover{background:var(--blue-700);transform:scale(1.04) translateY(-2px);box-shadow:0 8px 24px rgba(37,99,235,0.4);}
+    .btn-watch:active{transform:scale(0.94);}
+    .btn-pdf{width:100%;background:#f59e0b;color:white;border:none;padding:0.625rem;border-radius:6px;font-size:0.875rem;font-weight:500;cursor:pointer;margin-top:0.5rem;display:flex;align-items:center;justify-content:center;gap:0.4rem;transition:all 0.2s cubic-bezier(0.34,1.56,0.64,1);}
+    .btn-pdf:hover{background:#d97706;transform:scale(1.04) translateY(-2px);box-shadow:0 8px 24px rgba(245,158,11,0.4);}
 
     /* Image card */
-    .image-card { cursor: pointer; overflow: hidden; }
-    .image-card .img-placeholder { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 20px; min-height: 160px; background: #f5f0ff; }
-    .image-card .img-loading { font-size: 36px; }
-    .image-card .img-ititle { font-size: 13px; font-weight: 600; color: #555; text-align: center; }
-    .image-card .img-full { width: 100%; display: block; object-fit: cover; }
+    .image-card{background:white;border-radius:8px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.1);cursor:pointer;transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1);}
+    .image-card:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(37,99,235,0.2);}
+    .image-card img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;}
+    .image-card .img-title{padding:0.75rem 1rem;font-size:0.875rem;font-weight:500;color:var(--gray-900);}
 
-    /* Image viewer modal */
-    .img-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 1200; align-items: center; justify-content: center; flex-direction: column; gap: 12px; }
-    .img-overlay.show { display: flex; }
-    .img-overlay img { max-width: 90vw; max-height: 85vh; border-radius: 8px; object-fit: contain; }
-    .img-overlay .img-close { position: absolute; top: 16px; right: 20px; background: none; border: none; color: #fff; font-size: 28px; cursor: pointer; }
+    /* Link card */
+    .link-card{background:white;border-radius:8px;padding:1rem 1.25rem;display:flex;align-items:center;gap:0.875rem;cursor:pointer;border:1px solid var(--gray-200);box-shadow:0 1px 2px rgba(0,0,0,0.05);transition:all 0.25s cubic-bezier(0.34,1.56,0.64,1);}
+    .link-card:hover{box-shadow:0 8px 24px rgba(37,99,235,0.15);transform:translateY(-3px);}
+    .link-card .l-title{font-size:0.9375rem;font-weight:500;color:var(--gray-900);}
 
-    .btn-watch { margin-top: 10px; padding: 10px 0; background: #7c3aed; color: #fff; border: none; border-radius: 7px; font-size: 14px; font-weight: 600; cursor: pointer; width: 100%; }
-    .btn-watch:hover { background: #6d28d9; }
-    .btn-pdf { margin-top: 6px; padding: 9px 0; background: #fff; color: #7c3aed; border: 2px solid #7c3aed; border-radius: 7px; font-size: 14px; font-weight: 600; cursor: pointer; width: 100%; }
-    .btn-pdf:hover { background: #ede9fe; }
-
-    .state-msg { grid-column: 1/-1; text-align: center; padding: 60px; font-size: 15px; color: #888; }
-    .state-msg.err { color: #e53e3e; }
-
-    /* Live sub-tabs */
-    .sub-tabs { display: flex; gap: 10px; padding: 14px 36px; background: #f0f0f5; }
-    .sub-tab { padding: 7px 18px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; border: 2px solid #7c3aed; background: #fff; color: #7c3aed; }
-    .sub-tab.active { background: #7c3aed; color: #fff; }
-
-    /* Empty state */
-    .empty-state { grid-column: 1/-1; text-align: center; padding: 60px 20px; }
-    .empty-state .tv-icon { font-size: 52px; margin-bottom: 12px; }
-    .empty-state h3 { font-size: 16px; font-weight: 600; color: #555; margin-bottom: 6px; }
-    .empty-state p { font-size: 13px; color: #aaa; }
+    /* Empty / loading / error */
+    .state{grid-column:1/-1;text-align:center;padding:4rem 2rem;}
+    .state svg{opacity:0.4;margin-bottom:1rem;}
+    .state h3{font-size:1rem;font-weight:600;color:var(--gray-600);margin-bottom:0.5rem;}
+    .state p{font-size:0.875rem;color:var(--gray-400);}
+    .state.err h3{color:#EF4444;}
 
     /* Quality Modal */
-    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 1000; align-items: center; justify-content: center; }
-    .modal-overlay.show { display: flex; }
-    .modal { background: #1a1a2e; border-radius: 14px; padding: 24px 20px; width: 340px; max-width: 95vw; position: relative; }
-    .modal h2 { color: #fff; font-size: 16px; font-weight: 700; margin-bottom: 18px; }
-    .modal .close-btn { position: absolute; top: 14px; right: 16px; background: none; border: none; color: #aaa; font-size: 20px; cursor: pointer; }
-    .quality-btn { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 13px 16px; margin-bottom: 10px; background: #6d28d9; color: #fff; border: none; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; }
-    .quality-btn:hover { background: #7c3aed; }
-    .quality-btn .q-left { display: flex; align-items: center; gap: 10px; }
-    .modal-loading { color: #aaa; text-align: center; padding: 20px 0; font-size: 14px; }
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:1000;align-items:center;justify-content:center;padding:1rem;}
+    .modal-overlay.show{display:flex;}
+    .modal-box{background:white;border-radius:12px;width:100%;max-width:320px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.3);}
+    .modal-header{padding:1rem 1.25rem;border-bottom:1px solid var(--gray-200);display:flex;align-items:center;justify-content:space-between;}
+    .modal-header h3{font-size:1rem;font-weight:600;color:var(--gray-900);}
+    .modal-close{background:none;border:none;font-size:1.25rem;cursor:pointer;color:var(--gray-500);line-height:1;}
+    .modal-body{padding:1rem;}
+    .quality-btn{width:100%;background:var(--blue-600);color:white;padding:0.75rem 1rem;border-radius:8px;border:none;font-size:0.9375rem;font-weight:500;cursor:pointer;margin-bottom:0.625rem;display:flex;align-items:center;justify-content:space-between;transition:all 0.2s;}
+    .quality-btn:hover{background:var(--blue-700);transform:translateY(-2px);box-shadow:0 6px 20px rgba(37,99,235,0.4);}
+    .quality-btn:last-child{margin-bottom:0;}
+    .modal-loading{text-align:center;padding:1.5rem;color:var(--gray-500);font-size:0.875rem;}
 
     /* PDF Modal */
-    .pdf-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 1100; align-items: center; justify-content: center; }
-    .pdf-overlay.show { display: flex; }
-    .pdf-modal { background: #fff; border-radius: 12px; width: 92vw; height: 90vh; display: flex; flex-direction: column; overflow: hidden; }
-    .pdf-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 18px; border-bottom: 1px solid #e5e5e5; font-size: 15px; font-weight: 600; color: #222; }
-    .pdf-header button { background: none; border: none; font-size: 20px; cursor: pointer; color: #666; }
-    #pdf-frame { flex: 1; width: 100%; border: none; }
+    .pdf-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:1100;flex-direction:column;}
+    .pdf-overlay.show{display:flex;}
+    .pdf-header{background:white;padding:0.875rem 1.25rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--gray-200);flex-shrink:0;}
+    .pdf-header span{font-size:0.9375rem;font-weight:600;color:var(--gray-900);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+    .pdf-header button{background:none;border:none;font-size:1.5rem;cursor:pointer;color:var(--gray-500);flex-shrink:0;}
+    #pdf-frame{flex:1;border:none;width:100%;}
+
+    /* Image viewer */
+    .img-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:1200;align-items:center;justify-content:center;}
+    .img-overlay.show{display:flex;}
+    .img-overlay img{max-width:92vw;max-height:88vh;border-radius:8px;object-fit:contain;}
+    .img-close{position:absolute;top:1rem;right:1rem;background:rgba(255,255,255,0.15);border:none;color:white;font-size:1.5rem;width:40px;height:40px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+
+    @keyframes page-enter{0%{opacity:0;transform:translateY(20px);}100%{opacity:1;transform:translateY(0);}}
+    @keyframes shimmer-slide{0%{background-position:-200% center;}100%{background-position:200% center;}}
+
+    @media(max-width:600px){
+      .header{padding:0.75rem 1rem;}
+      .header img{height:26px;}
+      .header h1{font-size:0.875rem;}
+      .tabs,.sub-tabs,.breadcrumb{padding:0.625rem 0.875rem;}
+      .tab,.sub-tab{font-size:0.8125rem;padding:0.4rem 0.75rem;}
+      .content-grid{grid-template-columns:1fr 1fr;gap:0.625rem;padding:0.75rem;}
+      .folder-card,.link-card{padding:0.75rem;}
+      .folder-card .f-title,.link-card .l-title{font-size:0.8125rem;}
+      .video-card .vbody{padding:0.625rem 0.75rem 0.75rem;}
+      .video-card .vtitle{font-size:0.8125rem;}
+      .video-card .vmeta{font-size:0.75rem;}
+      .btn-watch,.btn-pdf{font-size:0.8125rem;padding:0.5rem;}
+    }
+    @media(max-width:380px){
+      .content-grid{grid-template-columns:1fr;}
+    }
   </style>
 </head>
 <body>
+<div class="app">
+  <div class="header">
+    <img src="https://nocache-appxdb-v2.classx.co.in/subject/2025-03-27-0.4048302541291886.png" alt="Padhle" onclick="location.href='index.html'"/>
+    <h1 id="batch-title">Loading...</h1>
+  </div>
 
-<header>
-  <img src="https://nocache-appxdb-v2.classx.co.in/subject/2025-03-27-0.4048302541291886.png"
-       alt="Padhle" onclick="window.location.href='index.html'"/>
-</header>
-
-<div class="hero">
-  <h1 id="batch-title">Loading...</h1>
   <div class="tabs">
-    <button class="tab active" onclick="switchTab('content')">Content</button>
-    <button class="tab" onclick="switchTab('live')">Live &amp; Upcoming</button>
+    <button class="tab active" onclick="switchTab('content')">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 7h18M3 12h18M3 17h18"/></svg>
+      Content
+    </button>
+    <button class="tab" onclick="switchTab('live')">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="10,8 16,12 10,16"/></svg>
+      Live &amp; Upcoming
+    </button>
   </div>
-</div>
 
-<div class="breadcrumb-bar" id="breadcrumb"></div>
-<div class="sub-tabs" id="sub-tabs" style="display:none">
-  <button class="sub-tab active" onclick="switchLiveTab('live')">Live &amp; Upcoming</button>
-  <button class="sub-tab" onclick="switchLiveTab('previous')">Previous Live Videos</button>
-</div>
-
-<!-- Quality Modal -->
-<div class="modal-overlay" id="modal-overlay" onclick="closeModalOutside(event)">
-  <div class="modal">
-    <button class="close-btn" onclick="closeModal()">✕</button>
-    <h2>Select Video Quality</h2>
-    <div id="modal-body"><div class="modal-loading">Loading...</div></div>
+  <div class="sub-tabs" id="sub-tabs">
+    <button class="sub-tab active" onclick="switchLiveTab('live')">Live &amp; Upcoming</button>
+    <button class="sub-tab" onclick="switchLiveTab('previous')">Previous Live Videos</button>
   </div>
-</div>
 
-<!-- PDF Modal -->
-<div class="pdf-overlay" id="pdf-overlay">
-  <div class="pdf-modal">
+  <div class="breadcrumb" id="breadcrumb"></div>
+
+  <!-- Quality Modal -->
+  <div class="modal-overlay" id="q-modal" onclick="closeQModal(event)">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>Select Video Quality</h3>
+        <button class="modal-close" onclick="closeQModal()">✕</button>
+      </div>
+      <div class="modal-body" id="q-body"><div class="modal-loading">Loading...</div></div>
+    </div>
+  </div>
+
+  <!-- PDF Modal -->
+  <div class="pdf-overlay" id="pdf-overlay">
     <div class="pdf-header">
-      <span id="pdf-title">PDF Viewer</span>
+      <span id="pdf-title">PDF</span>
       <button onclick="closePdf()">✕</button>
     </div>
-    <iframe id="pdf-frame" src="" frameborder="0"></iframe>
+    <iframe id="pdf-frame" src=""></iframe>
   </div>
-</div>
 
-<!-- Image Viewer Modal -->
-<div class="img-overlay" id="img-overlay" onclick="closeImage()">
-  <button class="img-close" onclick="closeImage()">✕</button>
-  <img id="img-viewer-src" src="" alt="Image"/>
-</div>
-
-<main>
-  <div class="grid" id="grid">
-    <div class="state-msg">Loading content...</div>
+  <!-- Image Viewer -->
+  <div class="img-overlay" id="img-overlay" onclick="closeImg()">
+    <button class="img-close" onclick="closeImg()">✕</button>
+    <img id="img-src" src="" alt=""/>
   </div>
-</main>
+
+  <main>
+    <div class="content-grid" id="grid">
+      <div class="state"><h3>Loading...</h3></div>
+    </div>
+  </main>
+</div>
 
 <script>
-  // ── Config ──────────────────────────────────────────────
-  const PROXY       = '';
-  const BASE        = 'https://apiserver.vercel.app';
-  const OLD_BASE    = 'https://apiserver-all.vercel.app/api/v1/padhle';
+  const API      = 'https://apiserver-all.vercel.app/api/v1/padhle';
+  const HENNA    = 'https://apiserver-henna.vercel.app';
+  const KEY      = '638udh3829162018';
   const FOLDER_ICON = 'https://www.vibrantacademy.com/icons/folder.svg';
-  const COURSE_82   = '82';
-  const DECRYPT_KEY = '638udh3829162018';
 
-  const params    = new URLSearchParams(window.location.search);
-  const courseId  = params.get('course_id');
-  const batchName = decodeURIComponent(params.get('title') || 'Batch Content');
-
-  // Use new API for all batches
-  const useNewApi = true;
-
+  const params   = new URLSearchParams(location.search);
+  const courseId = params.get('course_id');
+  const batchName= decodeURIComponent(params.get('title') || 'Batch');
   let stack = [];
 
-  document.getElementById('batch-title').textContent = batchName.toUpperCase();
+  document.getElementById('batch-title').textContent = batchName;
 
-  // ── AES-128-CBC Decrypt (Browser SubtleCrypto) ──────────
+  // ── Proxy fetch ──────────────────────────────────────────
+  async function apiFetch(url) {
+    const res = await fetch('/api/proxy?url=' + encodeURIComponent(url));
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    return res.json();
+  }
+
+  // ── AES decrypt ──────────────────────────────────────────
   async function decode(link) {
     if (!link) return null;
     const s = String(link).trim();
     if (s.startsWith('http')) return s;
-    const colonIdx = s.indexOf(':');
-    if (colonIdx === -1) return null;
+    const ci = s.indexOf(':');
+    if (ci === -1) return null;
     try {
-      const encPart = s.substring(0, colonIdx);
-      const ivB64   = s.substring(colonIdx + 1);
-      const ivStr   = atob(ivB64).replace(/\0/g, '').trim(); // 16 chars
-      const keyBytes = new TextEncoder().encode(DECRYPT_KEY);
-      const ivBytes  = new TextEncoder().encode(ivStr);
-      const encBytes = Uint8Array.from(atob(encPart), c => c.charCodeAt(0));
-      const cryptoKey = await crypto.subtle.importKey('raw', keyBytes, { name: 'AES-CBC' }, false, ['decrypt']);
-      const decBuf = await crypto.subtle.decrypt({ name: 'AES-CBC', iv: ivBytes }, cryptoKey, encBytes);
-      const result = new TextDecoder().decode(decBuf).replace(/\0/g, '').trim();
-      return result.startsWith('http') ? result : null;
+      const ivStr  = atob(s.substring(ci+1)).replace(/\0/g,'').trim();
+      const keyB   = new TextEncoder().encode(KEY);
+      const ivB    = new TextEncoder().encode(ivStr);
+      const encB   = Uint8Array.from(atob(s.substring(0,ci)), c=>c.charCodeAt(0));
+      const ck     = await crypto.subtle.importKey('raw',keyB,{name:'AES-CBC'},false,['decrypt']);
+      const dec    = await crypto.subtle.decrypt({name:'AES-CBC',iv:ivB},ck,encB);
+      const r      = new TextDecoder().decode(dec).replace(/\0/g,'').trim();
+      return r.startsWith('http') ? r : null;
     } catch { return null; }
   }
 
-  function playerUrl(hlsUrl) {
-    return `https://appx-play.akamai.net.in/video-player?url=${encodeURIComponent(hlsUrl)}`;
-  }
-
-  function pdfViewerUrl(pdfUrl) {
-    return `https://pdfweb.classx.co.in/pdfjs/web/viewer-new.html?file=${encodeURIComponent(pdfUrl)}`;
-  }
-
-  async function apiFetch(url) {
-    const res = await fetch('/api/proxy?url=' + encodeURIComponent(url));
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    return res.json();
-  }
+  function playerUrl(hls) { return 'https://appx-play.akamai.net.in/video-player?url='+encodeURIComponent(hls); }
+  function pdfViewer(pdf) { return 'https://pdfweb.classx.co.in/pdfjs/web/viewer-new.html?file='+encodeURIComponent(pdf); }
 
   // ── Tab switch ───────────────────────────────────────────
   function switchTab(tab) {
-    document.querySelectorAll('.tab').forEach((t, i) => {
-      t.classList.toggle('active', (i === 0 && tab === 'content') || (i === 1 && tab === 'live'));
-    });
-    const subTabs = document.getElementById('sub-tabs');
+    document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',(i===0&&tab==='content')||(i===1&&tab==='live')));
+    const st = document.getElementById('sub-tabs');
     const bc = document.getElementById('breadcrumb');
-    if (tab === 'content') {
-      subTabs.style.display = 'none';
-      bc.style.display = 'flex';
-      stack = [];
-      renderBreadcrumb();
-      loadContent(null);
+    if (tab==='content') {
+      st.classList.remove('show'); bc.style.display='';
+      stack=[]; renderBreadcrumb(); loadContent(null);
     } else {
-      subTabs.style.display = 'flex';
-      bc.style.display = 'none';
-      // reset sub-tab to live
-      document.querySelectorAll('.sub-tab').forEach((t,i) => t.classList.toggle('active', i===0));
+      st.classList.add('show'); bc.style.display='none';
+      document.querySelectorAll('.sub-tab').forEach((t,i)=>t.classList.toggle('active',i===0));
       loadLive('live');
     }
   }
 
   function switchLiveTab(type) {
-    document.querySelectorAll('.sub-tab').forEach((t,i) => {
-      t.classList.toggle('active', (i===0 && type==='live') || (i===1 && type==='previous'));
-    });
+    document.querySelectorAll('.sub-tab').forEach((t,i)=>t.classList.toggle('active',(i===0&&type==='live')||(i===1&&type==='previous')));
     loadLive(type);
   }
 
-  // ── Content loading ──────────────────────────────────────
-  async function loadContent(parentId) {
-    const grid = document.getElementById('grid');
-    grid.innerHTML = '<div class="state-msg">Loading...</div>';
-
+  // ── Content ──────────────────────────────────────────────
+  async function loadContent(folderId) {
+    setGrid('<div class="state"><h3>Loading...</h3></div>');
     try {
-      const pid = parentId || '-1';
-      const data = await apiFetch(`${BASE}/api/padhle/content?course_id=${courseId}&parent_id=${pid}`);
-      let items = data.data || [];
+      const url = folderId
+        ? `${API}/content?folder_id=${folderId}&course_id=${courseId}`
+        : `${API}/content?batch_id=${courseId}`;
+      const data = await apiFetch(url);
+      let items = data.items || [];
 
-      // auto-drill single Home FOLDER at root
-      if (!parentId && items.length === 1 && items[0].material_type === 'FOLDER') {
-        const home = items[0];
-        stack = [{ id: home.id, title: home.Title }];
+      // auto-drill single Home folder
+      if (!folderId && items.length===1 && items[0].type==='folder') {
+        stack=[{id:items[0].id,title:items[0].title}];
         renderBreadcrumb();
-        await loadContent(home.id);
+        await loadContent(items[0].id);
         return;
       }
-
       renderGrid(items);
-    } catch (e) {
-      grid.innerHTML = `<div class="state-msg err">Failed to load: ${e.message}</div>`;
+    } catch(e) {
+      setGrid(`<div class="state err"><h3>Failed to load</h3><p>${e.message}</p></div>`);
     }
   }
 
-  // ── Render grid ──────────────────────────────────────────
   function renderGrid(items) {
-    const grid = document.getElementById('grid');
-    if (!items.length) { grid.innerHTML = '<div class="state-msg">No content here.</div>'; return; }
-    grid.innerHTML = items.map(item => renderNewApiItem(item)).join('');
-  }
+    if (!items.length) { setGrid('<div class="state"><h3>No content here</h3></div>'); return; }
+    document.getElementById('grid').innerHTML = items.map(item => {
+      if (item.type==='folder') return `
+        <div class="folder-card" onclick="openFolder('${item.id}','${esc(item.title)}')">
+          <img src="${FOLDER_ICON}" width="36" height="36" alt="folder"/>
+          <div class="f-title">${item.title}</div>
+        </div>`;
 
-  function renderNewApiItem(item) {
-    const type = item.material_type;
-    const title = item.Title || '';
-    const id = item.id;
-
-    if (type === 'FOLDER') {
-      return `<div class="card folder-card" onclick="openFolder('${id}','${esc(title)}')">
-        <img class="f-icon" src="${FOLDER_ICON}" alt="folder"/>
-        <div class="f-title">${title}</div>
-      </div>`;
-    }
-
-    if (type === 'PDF') {
-      return `<div class="card pdf-card" onclick="openPdfItem('${esc(item.pdf_link)}','${esc(title)}')">
-        <div class="p-icon">📄</div>
-        <div class="p-title">${title}</div>
-      </div>`;
-    }
-
-    if (type === 'IMAGE') {
-      const imgUrl = item.thumbnail || '';
-      if (!imgUrl) return '';
-      return `<div class="card image-card" onclick="openImageDirect('${esc(imgUrl)}','${esc(title)}')">
-        <img class="img-full" src="${imgUrl}" alt="${esc(title)}"
-             onerror="this.parentElement.style.display='none'"/>
-      </div>`;
-    }
-
-    if (type === 'LINK') {
-      const encLink = item.file_link || item.download_link || '';
-      return `<div class="card link-card" onclick="openLinkItem('${esc(encLink)}')">
-        <div class="l-icon">🔗</div>
-        <div class="l-title">${title}</div>
-      </div>`;
-    }
-
-    if (type === 'VIDEO') {
-      const thumb = item.thumbnail || 'https://via.placeholder.com/400x225?text=Video';
-      const dur   = item.duration || '';
-      const hasPdf = !!(item.pdf_link);
-      return `<div class="card video-card">
-        <img class="thumb" src="${thumb}" alt="${esc(title)}"
-             onerror="this.src='https://via.placeholder.com/400x225?text=Video'"/>
-        <div class="vbody">
-          <div class="vtitle">${title}</div>
-          ${dur ? `<div class="vmeta">🕐 ${dur}</div>` : ''}
-          <button class="btn-watch" onclick="watchNewVideo('${id}','${courseId}')">Watch</button>
-          ${hasPdf ? `<button class="btn-pdf" onclick="openPdfItem('${esc(item.pdf_link)}','${esc(title)}')">📄 View PDF</button>` : ''}
-        </div>
-      </div>`;
-    }
-
-    return '';
-  }
-
-  function renderOldApiItem(item) {
-    if (item.type === 'folder') {
-      return `<div class="card folder-card" onclick="openFolder('${item.id}','${esc(item.title)}')">
-        <img class="f-icon" src="${FOLDER_ICON}" alt="folder"/>
-        <div class="f-title">${item.title}</div>
-      </div>`;
-    }
-    const thumb = item.thumbnail || 'https://via.placeholder.com/400x225?text=Video';
-    const created = item.created_at ? fmtDate(item.created_at) : '';
-    const dur = item.duration ? fmtDur(item.duration) : '';
-    return `<div class="card video-card">
-      <img class="thumb" src="${thumb}" alt="${esc(item.title)}"
-           onerror="this.src='https://via.placeholder.com/400x225?text=Video'"/>
-      <div class="vbody">
-        <div class="vtitle">${item.title}</div>
-        ${created ? `<div class="vmeta">📅 ${created}</div>` : ''}
-        ${dur ? `<div class="vmeta">🕐 ${dur}</div>` : ''}
-        <button class="btn-watch" onclick="watchOldVideo('${item.id}','${courseId}')">Watch</button>
-      </div>
-    </div>`;
-  }
-
-  // ── Watch video (new API - all batches) ─────────────────
-  async function watchNewVideo(videoId, courseId) {
-    showModal('<div class="modal-loading">Loading qualities...</div>');
-    try {
-      const data = await apiFetch(`${BASE}/api/padhle/video-details?video_id=${videoId}&course_id=${courseId}`);
-      const v = data.data || {};
-
-      // Priority: download_links → encrypted_links → file_link
-      let links = [];
-
-      if (Array.isArray(v.download_links) && v.download_links.length) {
-        links = v.download_links.map(q => ({ quality: q.quality || q.bitrate, path: q.path }));
-      } else if (Array.isArray(v.encrypted_links) && v.encrypted_links.length) {
-        links = v.encrypted_links.map(q => ({ quality: q.quality, path: q.path }));
-      } else if (Array.isArray(v.livestream_links) && v.livestream_links.length) {
-        links = v.livestream_links.map(q => ({ quality: q.quality, path: q.path }));
+      if (item.type==='video') {
+        const thumb = item.thumbnail || 'https://via.placeholder.com/320x180?text=Video';
+        const dur   = item.duration ? item.duration+' mins' : '';
+        return `<div class="video-card">
+          <img src="${thumb}" alt="${esc(item.title)}" onerror="this.src='https://via.placeholder.com/320x180?text=Video'"/>
+          <div class="vbody">
+            <div class="vtitle">${item.title}</div>
+            ${dur?`<div class="vmeta"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>${dur}</div>`:''}
+            <button class="btn-watch" onclick="watchVideo('${item.id}','${courseId}')">
+              <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>Watch
+            </button>
+          </div>
+        </div>`;
       }
+
+      if (item.type==='image') {
+        const src = item.thumbnail || '';
+        if (!src) return '';
+        return `<div class="image-card" onclick="openImg('${esc(src)}')">
+          <img src="${src}" alt="${esc(item.title)}" onerror="this.parentElement.style.display='none'"/>
+          <div class="img-title">${item.title}</div>
+        </div>`;
+      }
+
+      // link / other
+      return `<div class="link-card" onclick="openLink('${esc(item.url||item.file_link||'')}')">
+        <svg width="22" height="22" fill="none" stroke="#2563EB" stroke-width="2" viewBox="0 0 24 24"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+        <div class="l-title">${item.title}</div>
+      </div>`;
+    }).join('');
+  }
+
+  // ── Watch video ──────────────────────────────────────────
+  async function watchVideo(videoId, courseId) {
+    showQModal('<div class="modal-loading">Loading qualities...</div>');
+    try {
+      const data = await apiFetch(`${HENNA}/api/padhle/video-details?video_id=${videoId}&course_id=${courseId}`);
+      const v = data.data || {};
+      let links = [];
+      if (Array.isArray(v.download_links) && v.download_links.length) links = v.download_links;
+      else if (Array.isArray(v.encrypted_links) && v.encrypted_links.length) links = v.encrypted_links;
 
       if (!links.length) {
-        // fallback to file_link
-        const hlsUrl = await decode(v.file_link);
-        if (hlsUrl) { window.open(playerUrl(hlsUrl), '_blank'); closeModal(); return; }
-        document.getElementById('modal-body').innerHTML = '<div class="modal-loading">No qualities available.</div>';
+        const hls = await decode(v.file_link);
+        if (hls) { window.open(playerUrl(hls),'_blank'); closeQModal(); return; }
+        document.getElementById('q-body').innerHTML='<div class="modal-loading">No qualities available.</div>';
         return;
       }
 
-      const btns = await Promise.all(links.map(async q => {
+      const btns = await Promise.all(links.map(async q=>{
         const hls = await decode(q.path);
         if (!hls) return '';
-        const pUrl = playerUrl(hls);
-        return `<button class="quality-btn" onclick="window.open('${esc(pUrl)}','_blank');closeModal()">
-          <div class="q-left"><span>🎬</span><span>${q.quality}</span></div><span>›</span>
+        const pu = playerUrl(hls);
+        return `<button class="quality-btn" onclick="window.open('${esc(pu)}','_blank');closeQModal()">
+          <span>${q.quality||q.bitrate}</span><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
         </button>`;
       }));
-
-      const html = btns.filter(Boolean).join('');
-      document.getElementById('modal-body').innerHTML = html || '<div class="modal-loading">Could not decode links.</div>';
-    } catch (e) {
-      document.getElementById('modal-body').innerHTML = `<div class="modal-loading" style="color:#f87171">Error: ${e.message}</div>`;
+      document.getElementById('q-body').innerHTML = btns.filter(Boolean).join('') || '<div class="modal-loading">Could not decode.</div>';
+    } catch(e) {
+      document.getElementById('q-body').innerHTML=`<div class="modal-loading" style="color:#ef4444">${e.message}</div>`;
     }
   }
 
-  // ── Watch video (old API) ────────────────────────────────
-  async function watchOldVideo(videoId, courseId) {
-    showModal('<div class="modal-loading">Loading qualities...</div>');
-    try {
-      const url  = `${OLD_BASE}/video?video_id=${videoId}&course_id=${courseId}`;
-      const data = await apiFetch(url);
-      const qualities = data.qualities || [];
-      if (!qualities.length) { document.getElementById('modal-body').innerHTML = '<div class="modal-loading">No qualities.</div>'; return; }
-      document.getElementById('modal-body').innerHTML = qualities.map(q => `
-        <button class="quality-btn" onclick="window.open('${esc(q.player_url)}','_blank');closeModal()">
-          <div class="q-left"><span>🎬</span><span>${q.quality}</span></div><span>›</span>
-        </button>`).join('');
-    } catch (e) {
-      document.getElementById('modal-body').innerHTML = `<div class="modal-loading" style="color:#f87171">Error: ${e.message}</div>`;
-    }
-  }
-
-  // ── PDF open ─────────────────────────────────────────────
+  // ── PDF ──────────────────────────────────────────────────
   async function openPdfItem(encLink, title) {
     const raw = decodeURIComponent(encLink);
-    let pdfUrl = await decode(raw);
-    if (!pdfUrl) { alert('Could not decode PDF link.'); return; }
-    const viewerUrl = pdfViewerUrl(pdfUrl);
-    document.getElementById('pdf-title').textContent = decodeURIComponent(title) || 'PDF Viewer';
-    document.getElementById('pdf-frame').src = viewerUrl;
+    const url = await decode(raw);
+    if (!url) { alert('Could not decode PDF.'); return; }
+    document.getElementById('pdf-title').textContent = decodeURIComponent(title);
+    document.getElementById('pdf-frame').src = pdfViewer(url);
     document.getElementById('pdf-overlay').classList.add('show');
   }
+  function closePdf() { document.getElementById('pdf-overlay').classList.remove('show'); document.getElementById('pdf-frame').src=''; }
 
-  function closePdf() {
-    document.getElementById('pdf-overlay').classList.remove('show');
-    document.getElementById('pdf-frame').src = '';
+  // ── Image ────────────────────────────────────────────────
+  function openImg(src) { document.getElementById('img-src').src=decodeURIComponent(src); document.getElementById('img-overlay').classList.add('show'); }
+  function closeImg() { document.getElementById('img-overlay').classList.remove('show'); }
+
+  // ── Link ─────────────────────────────────────────────────
+  async function openLink(enc) {
+    const raw = decodeURIComponent(enc);
+    const url = raw.startsWith('http') ? raw : await decode(raw);
+    if (url) window.open(url,'_blank');
   }
 
-  // ── Image open ───────────────────────────────────────────
-  function openImageDirect(imgUrl, title) {
-    document.getElementById('img-viewer-src').src = decodeURIComponent(imgUrl);
-    document.getElementById('img-overlay').classList.add('show');
-  }
-
-  function closeImage() {
-    document.getElementById('img-overlay').classList.remove('show');
-    document.getElementById('img-viewer-src').src = '';
-  }
-
-  // ── Link open ────────────────────────────────────────────
-  async function openLinkItem(encLink) {
-    const raw = decodeURIComponent(encLink);
-    const url = await decode(raw);
-    if (!url) { alert('Could not decode link.'); return; }
-    window.open(url, '_blank');
-  }
-
-  // ── Live tab ─────────────────────────────────────────────
-  async function loadLive(type = 'live') {
-    const grid = document.getElementById('grid');
-    grid.innerHTML = '<div class="state-msg">Loading...</div>';
-
+  // ── Live ─────────────────────────────────────────────────
+  async function loadLive(type) {
+    setGrid('<div class="state"><h3>Loading...</h3></div>');
     try {
-      let items = [];
-      if (type === 'previous') {
-        const data = await apiFetch(`${BASE}/api/padhle/previous-live?course_id=${courseId}`);
-        items = Array.isArray(data.data) ? data.data : [];
+      let items=[];
+      if (type==='previous') {
+        const d = await apiFetch(`${HENNA}/api/padhle/previous-live?course_id=${courseId}`);
+        items = Array.isArray(d.data) ? d.data : [];
       } else {
-        const [liveRes, upcomingRes] = await Promise.all([
-          apiFetch(`${BASE}/api/padhle/live?course_id=${courseId}&live_status=1`),
-          apiFetch(`${BASE}/api/padhle/live?course_id=${courseId}&live_status=2`)
+        const [lr,ur] = await Promise.all([
+          apiFetch(`${HENNA}/api/padhle/live?course_id=${courseId}&live_status=1`),
+          apiFetch(`${HENNA}/api/padhle/live?course_id=${courseId}&live_status=2`)
         ]);
-        const liveItems     = Array.isArray(liveRes.data)     ? liveRes.data     : [];
-        const upcomingItems = Array.isArray(upcomingRes.data) ? upcomingRes.data : [];
-        items = [...liveItems, ...upcomingItems];
+        items=[...(Array.isArray(lr.data)?lr.data:[]),...(Array.isArray(ur.data)?ur.data:[])];
       }
-
       if (!items.length) {
-        grid.innerHTML = `<div class="empty-state">
-          <div class="tv-icon">📺</div>
+        setGrid(`<div class="state">
+          <svg width="52" height="52" fill="none" stroke="#9CA3AF" stroke-width="1.5" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="15" rx="2"/><path d="M17 2l-5 5-5-5"/></svg>
           <h3>No Live Videos</h3>
-          <p>${type === 'live' ? 'There are no live classes scheduled at the moment.' : 'No previous live videos found.'}</p>
-        </div>`;
+          <p>${type==='live'?'No live classes scheduled at the moment.':'No previous live videos found.'}</p>
+        </div>`);
         return;
       }
-
-      grid.innerHTML = items.map(item => {
-        const thumb = item.thumbnail || 'https://via.placeholder.com/400x225?text=Live';
+      document.getElementById('grid').innerHTML = items.map(item=>{
+        const thumb = item.thumbnail||'https://via.placeholder.com/320x180?text=Live';
         const hasPdf = !!(item.pdf_link);
-        const hasVideo = !!(item.video_player_url);
-        return `<div class="card video-card">
-          <img class="thumb" src="${thumb}" alt="${esc(item.Title)}"
-               onerror="this.src='https://via.placeholder.com/400x225?text=Live'"/>
+        const hasVid = !!(item.video_player_url);
+        return `<div class="video-card">
+          <img src="${thumb}" alt="${esc(item.Title||'')}" onerror="this.src='https://via.placeholder.com/320x180?text=Live'"/>
           <div class="vbody">
-            <div class="vtitle">${item.Title || ''}</div>
-            ${item.date_and_time ? `<div class="vmeta">📅 Created on: ${item.date_and_time}</div>` : ''}
-            ${item.duration ? `<div class="vmeta">🕐 ${item.duration}</div>` : ''}
-            ${hasVideo ? `<button class="btn-watch" onclick="window.open('${esc(item.video_player_url)}','_blank')">Watch</button>` : ''}
-            ${hasPdf ? `<button class="btn-pdf" onclick="openPdfItem('${esc(item.pdf_link)}','${esc(item.Title)}')">📄 View PDF</button>` : ''}
+            <div class="vtitle">${item.Title||''}</div>
+            ${item.date_and_time?`<div class="vmeta"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>${item.date_and_time}</div>`:''}
+            ${item.duration?`<div class="vmeta"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>${item.duration}</div>`:''}
+            ${hasVid?`<button class="btn-watch" onclick="window.open('${esc(item.video_player_url)}','_blank')"><svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>Watch</button>`:''}
+            ${hasPdf?`<button class="btn-pdf" onclick="openPdfItem('${esc(item.pdf_link)}','${esc(item.Title||'')}')"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg>View PDF</button>`:''}
           </div>
         </div>`;
       }).join('');
-    } catch (e) {
-      grid.innerHTML = `<div class="state-msg err">Failed: ${e.message}</div>`;
+    } catch(e) {
+      setGrid(`<div class="state err"><h3>Failed</h3><p>${e.message}</p></div>`);
     }
   }
 
   // ── Folder nav ───────────────────────────────────────────
   function openFolder(id, title) {
-    stack.push({ id, title: decodeURIComponent(title) });
+    stack.push({id, title:decodeURIComponent(title)});
     renderBreadcrumb();
     loadContent(id);
   }
 
   function renderBreadcrumb() {
-    const bc    = document.getElementById('breadcrumb');
-    const parts = [{ id: null, title: batchName }, ...stack];
-    bc.innerHTML = parts.map((p, i) => {
-      const isLast = i === parts.length - 1;
-      const sep    = isLast ? '' : '<span class="sep"> › </span>';
+    const bc = document.getElementById('breadcrumb');
+    const parts = [{id:null,title:batchName},...stack];
+    bc.innerHTML = parts.map((p,i)=>{
+      const isLast = i===parts.length-1;
+      const sep = isLast?'':'<span class="sep">›</span>';
       if (isLast) return `<span class="current">${p.title}</span>`;
       return `<span class="crumb" onclick="jumpTo(${i})">${p.title}</span>${sep}`;
     }).join('');
   }
 
-  function jumpTo(index) {
-    if (index === 0) { stack = []; renderBreadcrumb(); loadContent(null); }
-    else { stack = stack.slice(0, index); renderBreadcrumb(); loadContent(stack[stack.length - 1].id); }
+  function jumpTo(i) {
+    if (i===0){stack=[];renderBreadcrumb();loadContent(null);}
+    else{stack=stack.slice(0,i);renderBreadcrumb();loadContent(stack[stack.length-1].id);}
   }
 
   // ── Modal helpers ────────────────────────────────────────
-  function showModal(html) {
-    document.getElementById('modal-body').innerHTML = html;
-    document.getElementById('modal-overlay').classList.add('show');
-  }
-
-  function closeModal() { document.getElementById('modal-overlay').classList.remove('show'); }
-  function closeModalOutside(e) { if (e.target === document.getElementById('modal-overlay')) closeModal(); }
+  function showQModal(html){document.getElementById('q-body').innerHTML=html;document.getElementById('q-modal').classList.add('show');}
+  function closeQModal(e){if(!e||e.target===document.getElementById('q-modal'))document.getElementById('q-modal').classList.remove('show');}
 
   // ── Utils ────────────────────────────────────────────────
-  function fmtDate(str) {
-    const d = new Date(str);
-    return isNaN(d) ? str : d.toLocaleString('en-IN', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
-  }
-  function fmtDur(secs) { const m = Math.floor(secs/60), s = secs%60; return `${m} mins ${s} secs`; }
-  function esc(str) { return (str||'').replace(/'/g,"\\'").replace(/"/g,'&quot;'); }
+  function setGrid(html){document.getElementById('grid').innerHTML=html;}
+  function esc(s){return (s||'').replace(/'/g,"\\'").replace(/"/g,'&quot;');}
 
   // ── Init ─────────────────────────────────────────────────
-  if (courseId) { renderBreadcrumb(); loadContent(null); }
-  else { document.getElementById('grid').innerHTML = '<div class="state-msg err">No batch selected.</div>'; }
+  if (courseId){renderBreadcrumb();loadContent(null);}
+  else setGrid('<div class="state err"><h3>No batch selected</h3></div>');
 </script>
 </body>
 </html>
